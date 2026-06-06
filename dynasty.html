@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Dynasty Lodge – Bimbilla, Ghana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Leaflet CSS — required for map tiles and controls to render correctly -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #e8c97a;
+      --dark: #0d1117;
+      --dark2: #161b22;
+      --green-hotel: #7ab648;
+      --text-muted-custom: #8b949e;
+      --white: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--dark);
+      color: #dde1e7;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; }
+
+    /* ========= NAVBAR ========= */
+    .navbar-dynasty {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000; padding: 18px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: all 0.4s ease; background: transparent;
+    }
+    .navbar-dynasty.scrolled {
+      background: rgba(13,17,23,0.97);
+      backdrop-filter: blur(12px);
+      padding: 12px 40px;
+      box-shadow: 0 2px 30px rgba(0,0,0,0.5);
+    }
+    .navbar-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 600;
+      color: var(--gold); text-decoration: none; letter-spacing: 1px;
+    }
+    .navbar-logo span { color: var(--white); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.85); text-decoration: none;
+      font-size: 0.85rem; font-weight: 500;
+      letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-book-btn {
+      background: var(--gold); color: var(--dark) !important;
+      padding: 10px 24px; border-radius: 2px; font-weight: 600 !important;
+    }
+    .nav-book-btn:hover { background: var(--gold-light); color: var(--dark) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 26px; height: 2px; background: var(--white); transition: all 0.3s; }
+    /* Animate hamburger → X when menu is open */
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-menu {
+      display: none; position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--dark); z-index: 999;
+      flex-direction: column; align-items: center; justify-content: center; gap: 32px;
+    }
+    .mobile-menu.active { display: flex; }
+    .mobile-menu a {
+      font-family: 'Cormorant Garamond', serif; font-size: 2rem;
+      color: var(--white); text-decoration: none; transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-close {
+      position: absolute; top: 24px; right: 32px;
+      font-size: 2rem; color: var(--white); cursor: pointer; background: none; border: none;
+    }
+
+    /* ========= HERO ========= */
+    .hero {
+      height: 100vh; min-height: 600px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; overflow: hidden;
+    }
+    .hero-slides { position: absolute; inset: 0; }
+    .hero-slide {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0; transition: opacity 1.5s ease;
+    }
+    .hero-slide.active { opacity: 1; }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.7) 100%);
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; padding: 0 20px; }
+    .hero-caption {
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 20px; display: block;
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 6rem); font-weight: 400;
+      color: var(--white); line-height: 1.1; margin-bottom: 24px;
+    }
+    .hero h1 em { color: var(--gold); font-style: italic; }
+    .hero-sub {
+      font-size: 1rem; color: rgba(255,255,255,0.75);
+      font-weight: 300; margin-bottom: 40px; letter-spacing: 0.5px;
+    }
+    .hero-cta { display: inline-flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .btn-gold {
+      background: var(--gold); color: var(--dark);
+      padding: 14px 36px; font-weight: 600;
+      font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase;
+      border: none; border-radius: 2px; text-decoration: none;
+      transition: all 0.3s; cursor: pointer;
+    }
+    .btn-gold:hover { background: var(--gold-light); color: var(--dark); transform: translateY(-2px); }
+    .btn-outline-gold {
+      background: transparent; color: var(--white);
+      border: 1px solid rgba(255,255,255,0.5);
+      padding: 14px 36px; font-weight: 500;
+      font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase;
+      border-radius: 2px; text-decoration: none; transition: all 0.3s;
+    }
+    .btn-outline-gold:hover { border-color: var(--gold); color: var(--gold); }
+    .hero-scroll {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      z-index: 2; display: flex; flex-direction: column; align-items: center;
+      gap: 8px; color: rgba(255,255,255,0.6);
+      font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, transparent, var(--gold));
+      animation: scrollLine 2s ease infinite;
+    }
+    @keyframes scrollLine {
+      0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      50% { transform: scaleY(1); opacity: 1; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+
+    /* ========= AVAILABILITY BAR ========= */
+    .availability-bar {
+      background: var(--dark2);
+      border-top: 1px solid rgba(201,168,76,0.2);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+    .avail-inner { display: flex; align-items: stretch; flex-wrap: wrap; }
+    .avail-field {
+      flex: 1; min-width: 200px; padding: 24px 28px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .avail-field label {
+      display: block; font-size: 0.7rem; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+    }
+    .avail-field input, .avail-field select {
+      background: transparent; border: none; outline: none;
+      color: var(--white); font-family: 'Jost', sans-serif;
+      font-size: 0.95rem; width: 100%; cursor: pointer;
+    }
+    .avail-field input::placeholder { color: rgba(255,255,255,0.4); }
+    .avail-field select option { background: var(--dark2); color: var(--white); }
+    .avail-submit {
+      padding: 0 40px; background: var(--gold); color: var(--dark);
+      font-weight: 700; font-size: 0.8rem; letter-spacing: 2px;
+      text-transform: uppercase; border: none; cursor: pointer;
+      transition: background 0.3s; min-height: 80px;
+    }
+    .avail-submit:hover { background: var(--gold-light); }
+
+    /* ========= SECTIONS ========= */
+    section { padding: 100px 0; }
+    .section-tag {
+      font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--gold); display: block; margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.5rem); color: var(--white);
+      font-weight: 400; line-height: 1.2; margin-bottom: 20px;
+    }
+    .section-title em { color: var(--gold); font-style: italic; }
+    .section-desc { color: var(--text-muted-custom); font-size: 0.95rem; line-height: 1.8; max-width: 540px; }
+    .divider-gold { width: 60px; height: 2px; background: var(--gold); margin: 24px 0; }
+
+    /* ========= ABOUT ========= */
+    .about-section { background: var(--dark); }
+    .about-img-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr; gap: 12px; height: 520px;
+    }
+    .about-img-grid img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
+    .about-img-grid .img-main { grid-row: span 2; }
+    .about-badge {
+      display: inline-block; background: var(--gold); color: var(--dark);
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 8px 18px; margin-bottom: 32px;
+    }
+    .about-stats { display: flex; gap: 40px; margin-top: 40px; }
+    .about-stat-num {
+      font-family: 'Cormorant Garamond', serif; font-size: 2.5rem;
+      color: var(--gold); font-weight: 600; line-height: 1;
+    }
+    .about-stat-label {
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-muted-custom); margin-top: 4px;
+    }
+
+    /* ========= ROOMS ========= */
+    .rooms-section { background: linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%); }
+    .room-card {
+      background: var(--dark2); border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden; transition: transform 0.4s, box-shadow 0.4s; height: 100%;
+    }
+    .room-card:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .room-img { position: relative; overflow: hidden; height: 260px; }
+    .room-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .room-card:hover .room-img img { transform: scale(1.08); }
+    .room-badge {
+      position: absolute; top: 16px; left: 16px;
+      background: var(--gold); color: var(--dark);
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; padding: 5px 14px;
+    }
+    .room-info { padding: 28px; }
+    .room-name { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--white); margin-bottom: 8px; }
+    .room-desc { color: var(--text-muted-custom); font-size: 0.85rem; line-height: 1.7; margin-bottom: 20px; }
+    .room-features { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .room-feature { display: flex; align-items: center; gap: 6px; color: var(--text-muted-custom); font-size: 0.8rem; }
+    .room-feature i { color: var(--gold); font-size: 0.75rem; }
+    .room-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .room-price { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: var(--gold); font-weight: 600; }
+    .room-price span { font-family: 'Jost', sans-serif; font-size: 0.75rem; color: var(--text-muted-custom); font-weight: 400; }
+
+    /* ========= GALLERY ========= */
+    .gallery-section { background: var(--dark); }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: 280px 280px; gap: 8px;
+    }
+    .gallery-item { overflow: hidden; position: relative; cursor: pointer; }
+    .gallery-item:first-child { grid-row: span 2; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .gallery-item:hover img { transform: scale(1.1); }
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: rgba(201,168,76,0.3); opacity: 0;
+      transition: opacity 0.3s; display: flex; align-items: center; justify-content: center;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-overlay i { font-size: 2rem; color: var(--white); }
+
+    /* ========= AMENITIES ========= */
+    .amenities-section { background: var(--dark2); position: relative; }
+    .amenity-card {
+      text-align: center; padding: 40px 24px;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.3s; height: 100%;
+    }
+    .amenity-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+    .amenity-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(201,168,76,0.1);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 1.5rem; color: var(--gold); transition: all 0.3s;
+    }
+    .amenity-card:hover .amenity-icon { background: var(--gold); color: var(--dark); }
+    .amenity-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--white); margin-bottom: 10px; }
+    .amenity-desc { font-size: 0.82rem; color: var(--text-muted-custom); line-height: 1.6; }
+
+    /* ========= BOOKING FORM ========= */
+    .booking-section {
+      background: linear-gradient(135deg, var(--dark) 0%, #0a1628 100%);
+      position: relative;
+    }
+    .booking-section::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600') center/cover;
+      opacity: 0.08;
+    }
+    .booking-form-card {
+      background: rgba(22,27,34,0.95); border: 1px solid rgba(201,168,76,0.2);
+      padding: 48px; backdrop-filter: blur(10px); position: relative;
+    }
+    .form-group-custom { margin-bottom: 24px; }
+    .form-label-custom {
+      display: block; font-size: 0.7rem; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+    }
+    .form-control-custom {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--white); padding: 14px 18px;
+      font-family: 'Jost', sans-serif; font-size: 0.9rem;
+      outline: none; transition: border-color 0.3s; border-radius: 2px;
+    }
+    .form-control-custom:focus { border-color: var(--gold); }
+    .form-control-custom::placeholder { color: rgba(255,255,255,0.3); }
+    .form-control-custom option { background: var(--dark2); }
+    .booking-ref-box {
+      display: none; background: rgba(201,168,76,0.1);
+      border: 1px solid var(--gold); padding: 24px;
+      text-align: center; margin-top: 24px;
+    }
+    .booking-ref-code {
+      font-family: 'Cormorant Garamond', serif; font-size: 2rem;
+      color: var(--gold); letter-spacing: 4px; font-weight: 600;
+    }
+
+    /* ========= TESTIMONIALS ========= */
+    .testimonials-section { background: var(--dark); }
+    .testimonial-card {
+      background: var(--dark2); border: 1px solid rgba(255,255,255,0.06);
+      padding: 36px; height: 100%;
+    }
+    .testimonial-stars { color: var(--gold); margin-bottom: 16px; font-size: 0.85rem; }
+    .testimonial-text {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.15rem;
+      color: rgba(255,255,255,0.85); font-style: italic;
+      line-height: 1.7; margin-bottom: 24px;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: 14px; }
+    .testimonial-avatar {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif; font-size: 1.2rem;
+      color: var(--dark); font-weight: 600; flex-shrink: 0;
+    }
+    .testimonial-name { font-weight: 600; color: var(--white); font-size: 0.9rem; }
+    .testimonial-location { font-size: 0.78rem; color: var(--text-muted-custom); }
+
+    /* ========= LOCATION ========= */
+    .location-section { background: var(--dark2); }
+    .map-container { border: 1px solid rgba(201,168,76,0.2); overflow: hidden; height: 420px; }
+    .map-container iframe { width: 100%; height: 100%; border: none; filter: grayscale(80%) invert(10%); }
+    .location-info { padding: 20px 0; }
+    .location-item { display: flex; gap: 16px; margin-bottom: 28px; align-items: flex-start; }
+    .location-icon {
+      width: 44px; height: 44px; background: rgba(201,168,76,0.1);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; color: var(--gold); flex-shrink: 0;
+    }
+    .location-text-title { font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+    .location-text-val { font-size: 0.9rem; color: rgba(255,255,255,0.75); }
+    .directions-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--gold); color: var(--dark);
+      padding: 16px 32px; font-weight: 700; font-size: 0.82rem;
+      letter-spacing: 2px; text-transform: uppercase;
+      text-decoration: none; border-radius: 2px; transition: all 0.3s; margin-top: 16px;
+    }
+    .directions-btn:hover { background: var(--gold-light); color: var(--dark); transform: translateY(-2px); }
+
+    /* ========= WHATSAPP FLOAT ========= */
+    .whatsapp-float {
+      position: fixed; bottom: 32px; right: 32px; z-index: 500;
+      background: #25D366; color: var(--white);
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; text-decoration: none;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.4); transition: transform 0.3s;
+    }
+    .whatsapp-float:hover { transform: scale(1.1); color: var(--white); }
+
+    /* ========= FOOTER ========= */
+    footer {
+      background: #080c10; border-top: 1px solid rgba(201,168,76,0.15);
+      padding: 80px 0 40px;
+    }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--gold); font-weight: 600; margin-bottom: 16px; }
+    .footer-desc { color: var(--text-muted-custom); font-size: 0.85rem; line-height: 1.8; max-width: 280px; }
+    .footer-heading { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 24px; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: var(--text-muted-custom); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 32px; margin-top: 60px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-copy { color: var(--text-muted-custom); font-size: 0.8rem; }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social a {
+      width: 36px; height: 36px; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted-custom); text-decoration: none; font-size: 0.85rem; transition: all 0.3s;
+    }
+    .footer-social a:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ========= MODAL ========= */
+    .modal-dynasty .modal-content { background: var(--dark2); border: 1px solid rgba(201,168,76,0.2); color: var(--white); }
+    .modal-dynasty .modal-header { border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .modal-dynasty .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: var(--gold); }
+    .modal-dynasty .btn-close { filter: invert(1); }
+
+    /* =========================================================
+       GPS MAPPING SECTION — NEW ADDITION
+       ========================================================= */
+    .gps-section {
+      background: var(--dark);
+      padding: 100px 0;
+      position: relative;
+    }
+
+    /* Subtle grid texture for depth */
+    .gps-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    /* Map canvas container */
+    #dynasty-map {
+      width: 100%;
+      height: 480px;
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 2px;
+      background: var(--dark2);
+      position: relative;
+    }
+
+    /* Placeholder shown before map loads */
+    .map-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: var(--text-muted-custom);
+    }
+    .map-placeholder i {
+      font-size: 3rem;
+      color: rgba(201,168,76,0.3);
+    }
+    .map-placeholder p {
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    /* GPS control panel card */
+    .gps-panel {
+      background: var(--dark2);
+      border: 1px solid rgba(201,168,76,0.2);
+      padding: 36px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* GPS panel heading */
+    .gps-panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .gps-panel-title em { color: var(--gold); font-style: italic; }
+
+    /* Hotel pin info row */
+    .hotel-pin-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px;
+      background: rgba(201,168,76,0.06);
+      border-left: 3px solid var(--gold);
+    }
+    .hotel-pin-info i {
+      color: var(--gold);
+      font-size: 1.1rem;
+      margin-top: 2px;
+    }
+    .hotel-pin-label {
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .hotel-pin-val {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.5;
+    }
+
+    /* Primary GPS button */
+    .btn-gps {
+      width: 100%;
+      background: var(--gold);
+      color: var(--dark);
+      border: none;
+      padding: 16px 24px;
+      font-family: 'Jost', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-gps:hover:not(:disabled) {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+    }
+    .btn-gps:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    /* Spinner inside button while locating */
+    .btn-gps .gps-spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(13,17,23,0.3);
+      border-top-color: var(--dark);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .btn-gps.locating .gps-spinner { display: block; }
+    .btn-gps.locating .gps-icon { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Travel mode selector tabs */
+    .travel-modes {
+      display: flex;
+      gap: 8px;
+    }
+    .travel-mode-btn {
+      flex: 1;
+      padding: 10px 8px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-muted-custom);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .travel-mode-btn i { font-size: 1rem; }
+    .travel-mode-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(201,168,76,0.08);
+    }
+    .travel-mode-btn:hover { border-color: rgba(201,168,76,0.5); color: rgba(201,168,76,0.7); }
+
+    /* Route info stats (distance & ETA) */
+    .route-stats {
+      display: none; /* shown after route is calculated */
+      gap: 16px;
+    }
+    .route-stats.visible { display: flex; }
+    .route-stat-box {
+      flex: 1;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.2);
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .route-stat-icon { font-size: 1.2rem; color: var(--gold); margin-bottom: 8px; }
+    .route-stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      color: var(--white);
+      font-weight: 600;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .route-stat-label {
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted-custom);
+    }
+
+    /* Status / error message bar */
+    .gps-status {
+      display: none;
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      border-radius: 2px;
+      line-height: 1.5;
+    }
+    .gps-status.info {
+      display: block;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.3);
+      color: rgba(255,255,255,0.75);
+    }
+    .gps-status.error {
+      display: block;
+      background: rgba(220,53,69,0.1);
+      border: 1px solid rgba(220,53,69,0.3);
+      color: #f87171;
+    }
+    .gps-status.success {
+      display: block;
+      background: rgba(122,182,72,0.1);
+      border: 1px solid rgba(122,182,72,0.3);
+      color: #86efac;
+    }
+
+    /* Clear route link */
+    .clear-route-link {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-muted-custom);
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
+      padding: 0;
+      transition: color 0.2s;
+      font-family: 'Jost', sans-serif;
+      text-align: center;
+    }
+    .clear-route-link:hover { color: var(--gold); }
+
+    /* Open in Google Maps link */
+    .open-gmaps-link {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6);
+      font-size: 0.78rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.3s;
+      font-family: 'Jost', sans-serif;
+    }
+    .open-gmaps-link:hover { border-color: var(--gold); color: var(--gold); }
+    .open-gmaps-link.visible { display: flex; }
+
+    /* API key notice banner */
+    .api-key-notice {
+      background: rgba(201,168,76,0.08);
+      border: 1px dashed rgba(201,168,76,0.4);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.65);
+      border-radius: 2px;
+    }
+    .api-key-notice i { color: var(--gold); flex-shrink: 0; font-size: 1rem; }
+    .api-key-notice code {
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 2px;
+      font-size: 0.8rem;
+      color: var(--gold-light);
+    }
+
+    /* ========= RESPONSIVE ========= */
+    @media(max-width: 991px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .about-img-grid { height: 320px; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .gallery-item:first-child { grid-row: span 1; }
+      #dynasty-map { height: 360px; }
+      .gps-panel { margin-top: 24px; }
+    }
+    @media(max-width: 767px) {
+      .navbar-dynasty { padding: 16px 20px; }
+      .avail-inner { flex-direction: column; }
+      .avail-field { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .avail-submit { min-height: 60px; padding: 16px; }
+      .gallery-grid { grid-template-columns: 1fr; grid-template-rows: 200px; }
+      .gallery-item { height: 200px; }
+      .booking-form-card { padding: 28px 20px; }
+      .about-stats { flex-wrap: wrap; gap: 24px; }
+      #dynasty-map { height: 300px; }
+      .travel-modes { flex-wrap: wrap; }
+      .gps-panel { padding: 24px 20px; }
+    }
+
+    /* Fade-in animation */
+    .fade-up { opacity: 0; transform: translateY(40px); transition: all 0.7s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- =================== NAVBAR =================== -->
+<nav class="navbar-dynasty" id="mainNav">
+  <a href="#" class="navbar-logo">Dynasty <span>Lodge</span></a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#rooms">Rooms</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#directions">Directions</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#booking" class="nav-book-btn">Book Now</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="#home" onclick="closeMobile()">Home</a>
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#rooms" onclick="closeMobile()">Rooms</a>
+  <a href="#gallery" onclick="closeMobile()">Gallery</a>
+  <a href="#directions" onclick="closeMobile()">Directions</a>
+  <a href="#booking" onclick="closeMobile()">Book Now</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- =================== HERO =================== -->
+<section class="hero" id="home">
+  <div class="hero-slides">
+    <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1600&q=80')"></div>
+    <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1600&q=80')"></div>
+    <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1600&q=80')"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-caption">★ Welcome to Dynasty Lodge ★</span>
+    <h1>Your Home Away<br>from <em>Home</em></h1>
+    <p class="hero-sub">Comfort, elegance & warm hospitality in the heart of Bimbilla, Ghana</p>
+    <div class="hero-cta">
+      <a href="#booking" class="btn-gold">Reserve a Room</a>
+      <a href="#rooms" class="btn-outline-gold">Explore Rooms</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- =================== AVAILABILITY BAR =================== -->
+<div class="availability-bar" id="next">
+  <div class="container-fluid px-0">
+    <div class="avail-inner">
+      <div class="avail-field">
+        <label>Check In</label>
+        <input type="date" id="avail_checkin">
+      </div>
+      <div class="avail-field">
+        <label>Check Out</label>
+        <input type="date" id="avail_checkout">
+      </div>
+      <div class="avail-field">
+        <label>Room Type</label>
+        <select id="avail_room">
+          <option value="">Any Room</option>
+          <option value="standard">Standard Room</option>
+          <option value="deluxe">Deluxe Room</option>
+          <option value="suite">Executive Suite</option>
+          <option value="family">Family Room</option>
+        </select>
+      </div>
+      <div class="avail-field">
+        <label>Guests</label>
+        <select id="avail_guests">
+          <option>1 Guest</option>
+          <option>2 Guests</option>
+          <option>3 Guests</option>
+          <option>4+ Guests</option>
+        </select>
+      </div>
+      <button class="avail-submit" onclick="checkAvailability()">Check Availability</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== ABOUT =================== -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 fade-up">
+        <div class="about-img-grid">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/800px-Empire_State_Building_%28aerial_view%29.jpg"
+               onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80'"
+               class="img-main" alt="Dynasty Lodge exterior" style="object-fit:cover;">
+          <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80" alt="Hotel corridor" style="object-fit:cover; height:100%;">
+          <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80" alt="Hotel room" style="object-fit:cover; height:100%;">
+        </div>
+      </div>
+      <div class="col-lg-6 fade-up" style="transition-delay:0.2s">
+        <div class="about-badge">Est. 2024 · Bimbilla, Ghana</div>
+        <span class="section-tag">About Dynasty Lodge</span>
+        <h2 class="section-title">A Retreat Built on <em>Excellence</em></h2>
+        <div class="divider-gold"></div>
+        <p class="section-desc mb-3">
+          Nestled in the vibrant town of Bimbilla in Ghana's Northern Region, Dynasty Lodge offers a unique blend of contemporary comfort and warm Ghanaian hospitality. Our tastefully designed rooms, lush compound, and dedicated staff make every stay unforgettable.
+        </p>
+        <p class="section-desc">
+          Whether you're a business traveler, a family, or an adventurer exploring northern Ghana, Dynasty Lodge is your perfect home base — equipped with modern amenities, reliable power, and fast Wi-Fi.
+        </p>
+        <div class="about-stats">
+          <div>
+            <div class="about-stat-num">20+</div>
+            <div class="about-stat-label">Guest Rooms</div>
+          </div>
+          <div>
+            <div class="about-stat-num">24/7</div>
+            <div class="about-stat-label">Reception</div>
+          </div>
+          <div>
+            <div class="about-stat-num">100%</div>
+            <div class="about-stat-label">Satisfaction</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== ROOMS =================== -->
+<section class="rooms-section" id="rooms">
+  <div class="container">
+    <div class="text-center mb-5 fade-up">
+      <span class="section-tag">Accommodation</span>
+      <h2 class="section-title">Our <em>Rooms</em></h2>
+      <div class="divider-gold mx-auto"></div>
+      <p class="section-desc mx-auto">Every room at Dynasty Lodge is thoughtfully furnished for your comfort, privacy and peace of mind.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3 fade-up">
+        <div class="room-card">
+          <div class="room-img">
+            <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80" alt="Standard Room">
+            <div class="room-badge">Available</div>
+          </div>
+          <div class="room-info">
+            <div class="room-name">Standard Room</div>
+            <div class="room-desc">A cozy, well-appointed room with all essential amenities for a comfortable stay.</div>
+            <div class="room-features">
+              <span class="room-feature"><i class="fas fa-wifi"></i> Free WiFi</span>
+              <span class="room-feature"><i class="fas fa-snowflake"></i> AC</span>
+              <span class="room-feature"><i class="fas fa-tv"></i> TV</span>
+            </div>
+            <div class="room-footer">
+              <div class="room-price">GHS 250 <span>/ night</span></div>
+              <a href="#booking" class="btn-gold" style="padding:10px 18px;font-size:0.75rem;">Book</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 fade-up" style="transition-delay:0.1s">
+        <div class="room-card">
+          <div class="room-img">
+            <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&q=80" alt="Deluxe Room">
+            <div class="room-badge">Available</div>
+          </div>
+          <div class="room-info">
+            <div class="room-name">Deluxe Room</div>
+            <div class="room-desc">Spacious deluxe rooms with premium furnishings and balcony views of our garden.</div>
+            <div class="room-features">
+              <span class="room-feature"><i class="fas fa-wifi"></i> Free WiFi</span>
+              <span class="room-feature"><i class="fas fa-snowflake"></i> AC</span>
+              <span class="room-feature"><i class="fas fa-bath"></i> Ensuite</span>
+            </div>
+            <div class="room-footer">
+              <div class="room-price">GHS 400 <span>/ night</span></div>
+              <a href="#booking" class="btn-gold" style="padding:10px 18px;font-size:0.75rem;">Book</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 fade-up" style="transition-delay:0.2s">
+        <div class="room-card">
+          <div class="room-img">
+            <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80" alt="Executive Suite">
+            <div class="room-badge" style="background:#7ab648;color:#fff;">Popular</div>
+          </div>
+          <div class="room-info">
+            <div class="room-name">Executive Suite</div>
+            <div class="room-desc">Our flagship suite featuring a living area, king bed, and premium amenities.</div>
+            <div class="room-features">
+              <span class="room-feature"><i class="fas fa-wifi"></i> Free WiFi</span>
+              <span class="room-feature"><i class="fas fa-snowflake"></i> AC</span>
+              <span class="room-feature"><i class="fas fa-couch"></i> Lounge</span>
+            </div>
+            <div class="room-footer">
+              <div class="room-price">GHS 650 <span>/ night</span></div>
+              <a href="#booking" class="btn-gold" style="padding:10px 18px;font-size:0.75rem;">Book</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 fade-up" style="transition-delay:0.3s">
+        <div class="room-card">
+          <div class="room-img">
+            <img src="https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=600&q=80" alt="Family Room">
+            <div class="room-badge">Available</div>
+          </div>
+          <div class="room-info">
+            <div class="room-name">Family Room</div>
+            <div class="room-desc">Designed for families, with two queen beds, extra space, and child-friendly setup.</div>
+            <div class="room-features">
+              <span class="room-feature"><i class="fas fa-wifi"></i> Free WiFi</span>
+              <span class="room-feature"><i class="fas fa-snowflake"></i> AC</span>
+              <span class="room-feature"><i class="fas fa-users"></i> 4 Guests</span>
+            </div>
+            <div class="room-footer">
+              <div class="room-price">GHS 550 <span>/ night</span></div>
+              <a href="#booking" class="btn-gold" style="padding:10px 18px;font-size:0.75rem;">Book</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== AMENITIES =================== -->
+<section class="amenities-section">
+  <div class="container">
+    <div class="text-center mb-5 fade-up">
+      <span class="section-tag">What We Offer</span>
+      <h2 class="section-title">Hotel <em>Amenities</em></h2>
+      <div class="divider-gold mx-auto"></div>
+    </div>
+    <div class="row g-4">
+      <div class="col-6 col-md-4 col-lg-2 fade-up">
+        <div class="amenity-card">
+          <div class="amenity-icon"><i class="fas fa-wifi"></i></div>
+          <div class="amenity-name">Free WiFi</div>
+          <div class="amenity-desc">High-speed internet throughout</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 fade-up" style="transition-delay:0.05s">
+        <div class="amenity-card">
+          <div class="amenity-icon"><i class="fas fa-bolt"></i></div>
+          <div class="amenity-name">Generator</div>
+          <div class="amenity-desc">24/7 backup power supply</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 fade-up" style="transition-delay:0.1s">
+        <div class="amenity-card">
+          <div class="amenity-icon"><i class="fas fa-car"></i></div>
+          <div class="amenity-name">Parking</div>
+          <div class="amenity-desc">Secure on-site parking</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 fade-up" style="transition-delay:0.15s">
+        <div class="amenity-card">
+          <div class="amenity-icon"><i class="fas fa-utensils"></i></div>
+          <div class="amenity-name">Restaurant</div>
+          <div class="amenity-desc">Local & continental dishes</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 fade-up" style="transition-delay:0.2s">
+        <div class="amenity-card">
+          <div class="amenity-icon"><i class="fas fa-shield-alt"></i></div>
+          <div class="amenity-name">Security</div>
+          <div class="amenity-desc">24/7 security & CCTV</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 fade-up" style="transition-delay:0.25s">
+        <div class="amenity-card">
+          <div class="amenity-icon"><i class="fas fa-concierge-bell"></i></div>
+          <div class="amenity-name">Reception</div>
+          <div class="amenity-desc">24/7 front desk service</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== GALLERY =================== -->
+<section class="gallery-section" id="gallery">
+  <div class="container">
+    <div class="text-center mb-5 fade-up">
+      <span class="section-tag">Visual Tour</span>
+      <h2 class="section-title">Our <em>Gallery</em></h2>
+      <div class="divider-gold mx-auto"></div>
+    </div>
+    <div class="gallery-grid fade-up">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1580041065738-e72023775cdc?w=800&q=80" alt="Compound">
+        <div class="gallery-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80" alt="Room">
+        <div class="gallery-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80" alt="Suite">
+        <div class="gallery-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80" alt="Exterior">
+        <div class="gallery-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&q=80" alt="Interior">
+        <div class="gallery-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== BOOKING FORM =================== -->
+<section class="booking-section" id="booking">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5 fade-up">
+        <span class="section-tag">Reservations</span>
+        <h2 class="section-title">Book Your <em>Stay</em></h2>
+        <div class="divider-gold"></div>
+        <p class="section-desc mb-4">Reserve your room directly with us — no login required. You'll receive a unique booking reference code instantly.</p>
+        <div class="location-item">
+          <div class="location-icon"><i class="fas fa-phone"></i></div>
+          <div>
+            <div class="location-text-title">Call Us</div>
+            <div class="location-text-val">+233 XX XXX XXXX</div>
+          </div>
+        </div>
+        <div class="location-item">
+          <div class="location-icon"><i class="fab fa-whatsapp"></i></div>
+          <div>
+            <div class="location-text-title">WhatsApp</div>
+            <div class="location-text-val">+233 XX XXX XXXX</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-7 fade-up" style="transition-delay:0.2s">
+        <div class="booking-form-card">
+          <h3 style="font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:1.6rem;margin-bottom:28px;">Make a Reservation</h3>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-group-custom">
+                <label class="form-label-custom">Full Name *</label>
+                <input type="text" class="form-control-custom" id="b_name" placeholder="Enter your full name">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group-custom">
+                <label class="form-label-custom">Phone Number *</label>
+                <input type="tel" class="form-control-custom" id="b_phone" placeholder="+233 XX XXX XXXX">
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group-custom">
+                <label class="form-label-custom">Email (Optional)</label>
+                <input type="email" class="form-control-custom" id="b_email" placeholder="your@email.com">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group-custom">
+                <label class="form-label-custom">Check-In Date *</label>
+                <input type="date" class="form-control-custom" id="b_checkin">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group-custom">
+                <label class="form-label-custom">Check-Out Date *</label>
+                <input type="date" class="form-control-custom" id="b_checkout">
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group-custom">
+                <label class="form-label-custom">Room Type *</label>
+                <select class="form-control-custom" id="b_room">
+                  <option value="">Select room type</option>
+                  <option value="Standard Room">Standard Room – GHS 250/night</option>
+                  <option value="Deluxe Room">Deluxe Room – GHS 400/night</option>
+                  <option value="Executive Suite">Executive Suite – GHS 650/night</option>
+                  <option value="Family Room">Family Room – GHS 550/night</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-12">
+              <button class="btn-gold w-100" style="padding:16px;font-size:0.9rem;" onclick="submitBooking()">
+                <i class="fas fa-calendar-check me-2"></i> Confirm Reservation
+              </button>
+            </div>
+          </div>
+          <div class="booking-ref-box" id="bookingRefBox">
+            <div style="color:var(--gold);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Booking Confirmed! Your Reference Code:</div>
+            <div class="booking-ref-code" id="bookingRefCode"></div>
+            <div style="color:rgba(255,255,255,0.6);font-size:0.82rem;margin-top:12px;">Save this code. Present it at check-in.</div>
+            <a id="whatsappConfirm" href="#" target="_blank" class="directions-btn mt-3" style="font-size:0.78rem;">
+              <i class="fab fa-whatsapp"></i> Send to WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== TESTIMONIALS =================== -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="text-center mb-5 fade-up">
+      <span class="section-tag">Guest Reviews</span>
+      <h2 class="section-title">What Our <em>Guests</em> Say</h2>
+      <div class="divider-gold mx-auto"></div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 fade-up">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <div class="testimonial-text">"Best accommodation in Bimbilla by far! The rooms are clean, staff are friendly and the generator never let us down. Will definitely return."</div>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">A</div>
+            <div>
+              <div class="testimonial-name">Alhaji Sule</div>
+              <div class="testimonial-location">Tamale, Ghana</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 fade-up" style="transition-delay:0.1s">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <div class="testimonial-text">"Stayed for a week on a business trip. The executive suite was excellent — spacious, clean and great WiFi. The compound is beautifully designed."</div>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">K</div>
+            <div>
+              <div class="testimonial-name">Kofi Mensah</div>
+              <div class="testimonial-location">Accra, Ghana</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 fade-up" style="transition-delay:0.2s">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★☆</div>
+          <div class="testimonial-text">"Very good value for money. The family room was perfect for us. Location is great and the security is top notch. Highly recommend for northern Ghana travels."</div>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">F</div>
+            <div>
+              <div class="testimonial-name">Fatima Ibrahim</div>
+              <div class="testimonial-location">Kumasi, Ghana</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================
+     GPS MAPPING & DIRECTIONS SECTION — NEW FEATURE
+     ======================================================= -->
+<section class="gps-section" id="directions">
+  <div class="container">
+
+    <!-- Section header (matches existing style) -->
+    <div class="text-center mb-5 fade-up">
+      <span class="section-tag">GPS Navigation</span>
+      <h2 class="section-title">Get <em>Directions</em> to Dynasty Lodge</h2>
+      <div class="divider-gold mx-auto"></div>
+      <p class="section-desc mx-auto">
+        Use your device's GPS to find your exact route to us — with real-time distance and travel time.
+      </p>
+    </div>
+
+    <!-- Free tier notice -->
+    <div class="api-key-notice fade-up">
+      <i class="fas fa-check-circle" style="color:var(--green-hotel);"></i>
+      <span>
+        <strong style="color:var(--gold-light);">100% Free &amp; No API Key Required.</strong>
+        This map runs on <strong>Leaflet.js + OpenStreetMap</strong> — completely free, open-source,
+        and works instantly with no sign-up or billing needed.
+        The <em>Open in Google Maps</em> button still provides full turn-by-turn navigation.
+      </span>
+    </div>
+
+    <div class="row g-4 align-items-start">
+
+      <!-- ── Left: Interactive Leaflet / OpenStreetMap ── -->
+      <div class="col-lg-8 fade-up">
+        <div id="dynasty-map">
+          <!-- Leaflet renders here on DOMContentLoaded — no API key needed -->
+        </div>
+      </div>
+
+      <!-- ── Right: GPS Control Panel ── -->
+      <div class="col-lg-4 fade-up" style="transition-delay:0.15s">
+        <div class="gps-panel">
+
+          <!-- Panel title -->
+          <div>
+            <div class="gps-panel-title">Navigate to<br><em>Dynasty Lodge</em></div>
+            <p style="font-size:0.82rem;color:var(--text-muted-custom);margin-top:10px;line-height:1.6;">
+              Click the button below to detect your current location and draw a live route to the hotel.
+            </p>
+          </div>
+
+          <!-- Hotel pin address -->
+          <div class="hotel-pin-info">
+            <i class="fas fa-map-pin"></i>
+            <div>
+              <div class="hotel-pin-label">Hotel Location</div>
+              <div class="hotel-pin-val">Dynasty Lodge<br>Bimbilla, Northern Region<br>Ghana</div>
+            </div>
+          </div>
+
+          <!-- Travel mode selector -->
+          <div>
+            <div style="font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Travel Mode</div>
+            <div class="travel-modes" id="travelModes">
+              <button class="travel-mode-btn active" data-mode="car" onclick="setTravelMode(this)">
+                <i class="fas fa-car"></i> Drive
+              </button>
+              <button class="travel-mode-btn" data-mode="foot" onclick="setTravelMode(this)">
+                <i class="fas fa-walking"></i> Walk
+              </button>
+              <button class="travel-mode-btn" data-mode="bike" onclick="setTravelMode(this)">
+                <i class="fas fa-bicycle"></i> Cycle
+              </button>
+            </div>
+          </div>
+
+          <!-- Main GPS button -->
+          <button class="btn-gps" id="gpsBtn" onclick="getMyLocation()">
+            <span class="gps-spinner"></span>
+            <i class="fas fa-location-crosshairs gps-icon"></i>
+            Get My Location & Route
+          </button>
+
+          <!-- Status / error messages -->
+          <div class="gps-status" id="gpsStatus"></div>
+
+          <!-- Route stats: distance & ETA (shown after successful route) -->
+          <div class="route-stats" id="routeStats">
+            <div class="route-stat-box">
+              <div class="route-stat-icon"><i class="fas fa-road"></i></div>
+              <div class="route-stat-value" id="statDistance">—</div>
+              <div class="route-stat-label">Distance</div>
+            </div>
+            <div class="route-stat-box">
+              <div class="route-stat-icon"><i class="fas fa-clock"></i></div>
+              <div class="route-stat-value" id="statDuration">—</div>
+              <div class="route-stat-label">Est. Travel Time</div>
+            </div>
+          </div>
+
+          <!-- Open in Google Maps (native app) -->
+          <a id="openGmapsLink" class="open-gmaps-link" href="#" target="_blank" rel="noopener">
+            <i class="fab fa-google"></i> Open in Google Maps
+          </a>
+
+          <!-- Clear route -->
+          <button class="clear-route-link" id="clearBtn" onclick="clearRoute()">
+            <i class="fas fa-times me-1"></i> Clear Route
+          </button>
+
+        </div><!-- /.gps-panel -->
+      </div>
+
+    </div><!-- /.row -->
+  </div><!-- /.container -->
+</section>
+<!-- ======= END GPS MAPPING SECTION ======= -->
+
+
+<!-- =================== LOCATION (existing) =================== -->
+<section class="location-section" id="contact">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-6 fade-up">
+        <span class="section-tag">Find Us</span>
+        <h2 class="section-title">Our <em>Location</em></h2>
+        <div class="divider-gold"></div>
+        <div class="location-info">
+          <div class="location-item">
+            <div class="location-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <div class="location-text-title">Address</div>
+              <div class="location-text-val">Dynasty Lodge, Bimbilla<br>Northern Region, Ghana</div>
+            </div>
+          </div>
+          <div class="location-item">
+            <div class="location-icon"><i class="fas fa-phone"></i></div>
+            <div>
+              <div class="location-text-title">Phone</div>
+              <div class="location-text-val">+233 XX XXX XXXX</div>
+            </div>
+          </div>
+          <div class="location-item">
+            <div class="location-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <div class="location-text-title">Email</div>
+              <div class="location-text-val">info@dynastylodge.com.gh</div>
+            </div>
+          </div>
+          <div class="location-item">
+            <div class="location-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <div class="location-text-title">Reception Hours</div>
+              <div class="location-text-val">Open 24 Hours, 7 Days a Week</div>
+            </div>
+          </div>
+        </div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Dynasty+Lodge+Bimbilla+Ghana" target="_blank" class="directions-btn">
+          <i class="fas fa-directions"></i> Get Directions on Google Maps
+        </a>
+      </div>
+      <div class="col-lg-6 fade-up" style="transition-delay:0.2s">
+        <div class="map-container">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15887.51!2d-0.0833!3d9.8833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sBimbilla%2C+Ghana!5e0!3m2!1sen!2sgh!4v1"
+            allowfullscreen="" loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FOOTER =================== -->
+<footer>
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <div class="footer-logo">Dynasty Lodge</div>
+        <p class="footer-desc">Your home away from home in Bimbilla, Ghana. Offering comfort, security and warm Ghanaian hospitality since 2024.</p>
+      </div>
+      <div class="col-lg-2 col-md-4">
+        <div class="footer-heading">Quick Links</div>
+        <ul class="footer-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#rooms">Our Rooms</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#directions">Directions</a></li>
+          <li><a href="#booking">Book Now</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4">
+        <div class="footer-heading">Our Rooms</div>
+        <ul class="footer-links">
+          <li><a href="#booking">Standard Room – GHS 250</a></li>
+          <li><a href="#booking">Deluxe Room – GHS 400</a></li>
+          <li><a href="#booking">Executive Suite – GHS 650</a></li>
+          <li><a href="#booking">Family Room – GHS 550</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4">
+        <div class="footer-heading">Contact</div>
+        <ul class="footer-links">
+          <li><a href="#">Bimbilla, Northern Region, Ghana</a></li>
+          <li><a href="tel:+233XXXXXXXX">+233 XX XXX XXXX</a></li>
+          <li><a href="mailto:info@dynastylodge.com.gh">info@dynastylodge.com.gh</a></li>
+        </ul>
+        <div style="margin-top:20px;">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Dynasty+Lodge+Bimbilla+Ghana"
+             target="_blank"
+             style="color:var(--gold);font-size:0.82rem;text-decoration:none;">
+            <i class="fas fa-map-marker-alt me-1"></i> Get Directions
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2024 Dynasty Lodge, Bimbilla – Ghana. All rights reserved.</div>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-whatsapp"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp Float Button -->
+<a href="https://wa.me/233XXXXXXXXX?text=Hello%20Dynasty%20Lodge%2C%20I%20would%20like%20to%20make%20a%20reservation."
+   class="whatsapp-float" target="_blank" title="Book via WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- =================== SCRIPTS =================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  LEAFLET + OPENSTREETMAP — 100% FREE, NO API KEY NEEDED     ║
+  ║  Routing powered by OSRM (Open Source Routing Machine)      ║
+  ║  Tile maps © OpenStreetMap contributors                     ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<!-- Leaflet JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<script>
+  /* ============================================================
+     EXISTING SITE JAVASCRIPT (unchanged)
+     ============================================================ */
+
+  // Navbar scroll behaviour
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // ── Mobile menu toggle ──────────────────────────────────────
+  function closeMobile() {
+    document.getElementById('mobileMenu').classList.remove('active');
+    document.getElementById('hamburger').classList.remove('open');
+  }
+  function openMobile() {
+    document.getElementById('mobileMenu').classList.add('active');
+    document.getElementById('hamburger').classList.add('open');
+  }
+  document.getElementById('hamburger').addEventListener('click', function () {
+    document.getElementById('mobileMenu').classList.contains('active') ? closeMobile() : openMobile();
+  });
+  document.getElementById('mobileClose').addEventListener('click', closeMobile);
+  document.getElementById('mobileMenu').addEventListener('click', function (e) {
+    if (e.target === this) closeMobile();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeMobile();
+  });
+
+  // Hero slideshow
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.hero-slide');
+  setInterval(() => {
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add('active');
+  }, 5000);
+
+  // Fade-up on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Check availability
+  function checkAvailability() {
+    const cin  = document.getElementById('avail_checkin').value;
+    const cout = document.getElementById('avail_checkout').value;
+    const room = document.getElementById('avail_room').value;
+    if (!cin || !cout) { alert('Please select check-in and check-out dates.'); return; }
+    if (new Date(cout) <= new Date(cin)) { alert('Check-out must be after check-in.'); return; }
+    document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+    if (room) document.getElementById('b_room').value = room.charAt(0).toUpperCase() + room.slice(1) + ' Room';
+    document.getElementById('b_checkin').value = cin;
+    document.getElementById('b_checkout').value = cout;
+  }
+
+  // Booking form submission
+  function submitBooking() {
+    const name     = document.getElementById('b_name').value.trim();
+    const phone    = document.getElementById('b_phone').value.trim();
+    const checkin  = document.getElementById('b_checkin').value;
+    const checkout = document.getElementById('b_checkout').value;
+    const room     = document.getElementById('b_room').value;
+    if (!name || !phone || !checkin || !checkout || !room) {
+      alert('Please fill in all required fields (*).'); return;
+    }
+    if (new Date(checkout) <= new Date(checkin)) {
+      alert('Check-out date must be after check-in date.'); return;
+    }
+    const ref = 'DYN-' + Date.now().toString(36).toUpperCase().slice(-6);
+    document.getElementById('bookingRefCode').textContent = ref;
+    document.getElementById('bookingRefBox').style.display = 'block';
+    document.getElementById('bookingRefBox').scrollIntoView({ behavior: 'smooth' });
+    const msg = encodeURIComponent(
+      `🏨 *Dynasty Lodge Booking*\n\nRef: *${ref}*\nName: ${name}\nPhone: ${phone}\nRoom: ${room}\n` +
+      `Check-in: ${checkin}\nCheck-out: ${checkout}\n\nPlease confirm my reservation.`
+    );
+    document.getElementById('whatsappConfirm').href = `https://wa.me/233XXXXXXXXX?text=${msg}`;
+  }
+
+  // Set min dates
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('b_checkin').min      = today;
+  document.getElementById('b_checkout').min     = today;
+  document.getElementById('avail_checkin').min  = today;
+  document.getElementById('avail_checkout').min = today;
+
+
+  /* ============================================================
+     GPS MAPPING — LEAFLET + OPENSTREETMAP + OSRM ROUTING
+     ============================================================
+     • Map tiles  : OpenStreetMap (free, no key)
+     • Routing    : OSRM public demo server (free, no key)
+     • GPS        : browser navigator.geolocation
+     • Straight-line distance shown when OSRM has no road route
+  ============================================================ */
+
+  // ── Hotel coordinates (Bimbilla, Northern Region, Ghana) ────
+  // Update these to the exact GPS pin of the hotel if available.
+  const HOTEL_LAT  = 9.8833;
+  const HOTEL_LNG  = -0.0833;
+  const HOTEL_NAME = 'Dynasty Lodge, Bimbilla';
+
+  // ── State variables ─────────────────────────────────────────
+  let leafletMap    = null;   // Leaflet map instance
+  let userMarker    = null;   // Blue dot — user location
+  let hotelMarker   = null;   // Gold pin — hotel location
+  let routePolyline = null;   // Drawn route line
+  let userLatLng    = null;   // Cached { lat, lng } of user
+  let selectedMode  = 'car';  // 'car' | 'foot' | 'bike'
+
+  // ── OSRM profile map (mode → OSRM profile name) ─────────────
+  const OSRM_PROFILES = { car: 'driving', foot: 'walking', bike: 'cycling' };
+
+  // ── Custom map tile layer (dark-compatible Stadia Alidade) ───
+  // Using CartoDB Dark Matter tiles — free, no key, dark themed
+  const TILE_URL     = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+  const TILE_ATTRIB  = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
+
+  /**
+   * initLeafletMap — initialises the Leaflet map on DOMContentLoaded.
+   * Runs immediately, no API key required.
+   */
+  function initLeafletMap() {
+    // Create the Leaflet map centred on the hotel
+    leafletMap = L.map('dynasty-map', {
+      center:          [HOTEL_LAT, HOTEL_LNG],
+      zoom:            15,
+      zoomControl:     true,
+      attributionControl: true,
+    });
+
+    // Add dark CartoDB tile layer (free, matches site dark theme)
+    L.tileLayer(TILE_URL, {
+      attribution: TILE_ATTRIB,
+      subdomains:  'abcd',
+      maxZoom:     19,
+    }).addTo(leafletMap);
+
+    // ── Custom hotel marker icon (gold pin) ──────────────────
+    const hotelIcon = L.divIcon({
+      className: '',
+      html: `
+        <div style="
+          width:36px; height:36px;
+          background:#C9A84C;
+          border:3px solid #0d1117;
+          border-radius:50% 50% 50% 0;
+          transform:rotate(-45deg);
+          box-shadow:0 4px 14px rgba(201,168,76,0.5);
+          display:flex; align-items:center; justify-content:center;
+        ">
+          <i class="fas fa-hotel" style="
+            transform:rotate(45deg);
+            color:#0d1117;
+            font-size:14px;
+            margin-left:1px;
+          "></i>
+        </div>`,
+      iconSize:   [36, 36],
+      iconAnchor: [18, 36],
+      popupAnchor:[0, -38],
+    });
+
+    // Place hotel marker
+    hotelMarker = L.marker([HOTEL_LAT, HOTEL_LNG], { icon: hotelIcon })
+      .addTo(leafletMap)
+      .bindPopup(`
+        <div style="
+          font-family:'Jost',sans-serif;
+          background:#161b22;
+          color:#fff;
+          padding:12px 16px;
+          border-left:3px solid #C9A84C;
+          min-width:180px;
+        ">
+          <div style="color:#C9A84C;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">
+            📍 Dynasty Lodge
+          </div>
+          <div style="font-size:0.88rem;line-height:1.5;color:rgba(255,255,255,0.85);">
+            Bimbilla, Northern Region<br>Ghana
+          </div>
+          <a href="#booking" style="
+            display:inline-block;margin-top:10px;
+            background:#C9A84C;color:#0d1117;
+            padding:6px 14px;font-size:0.72rem;
+            font-weight:700;letter-spacing:1px;
+            text-decoration:none;border-radius:2px;
+          ">Book a Room</a>
+        </div>`, {
+          className:   'leaflet-popup-dynasty',
+          closeButton: true,
+        })
+      .openPopup();
+
+    // Pre-set Google Maps fallback link
+    updateGmapsLink(null);
+  }
+
+  // Initialise map as soon as DOM is ready
+  document.addEventListener('DOMContentLoaded', initLeafletMap);
+
+  /**
+   * setTravelMode — switches the active travel mode button.
+   * If user location is already known, re-fetches the route.
+   */
+  function setTravelMode(btn) {
+    document.querySelectorAll('.travel-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedMode = btn.dataset.mode;
+
+    // Re-draw route if we already have user position
+    if (userLatLng) {
+      fetchOsrmRoute(userLatLng.lat, userLatLng.lng);
+    }
+  }
+
+  /**
+   * getMyLocation — triggers browser GPS.
+   * Shows spinner while locating, then draws route via OSRM.
+   */
+  function getMyLocation() {
+    if (!navigator.geolocation) {
+      setStatus('error', '<i class="fas fa-times-circle me-2"></i>Geolocation is not supported by your browser.');
+      return;
+    }
+
+    // Set button to loading/spinner state
+    const btn = document.getElementById('gpsBtn');
+    btn.classList.add('locating');
+    btn.disabled = true;
+    setStatus('info', '<i class="fas fa-satellite-dish me-2"></i>Detecting your location…');
+
+    navigator.geolocation.getCurrentPosition(
+      onLocationSuccess,
+      onLocationError,
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+    );
+  }
+
+  /**
+   * onLocationSuccess — called when GPS returns a fix.
+   * Places user marker and draws route to hotel.
+   */
+  function onLocationSuccess(position) {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    userLatLng = { lat, lng };
+
+    resetGpsBtn();
+    setStatus('success', '<i class="fas fa-check-circle me-2"></i>Location found! Drawing your route…');
+
+    // ── Custom user marker icon (blue pulsing dot) ───────────
+    const userIcon = L.divIcon({
+      className: '',
+      html: `
+        <div style="position:relative;width:20px;height:20px;">
+          <!-- Pulse ring -->
+          <div style="
+            position:absolute;inset:-6px;
+            border-radius:50%;
+            background:rgba(59,130,246,0.25);
+            animation:leafletPulse 1.8s ease-out infinite;
+          "></div>
+          <!-- Solid dot -->
+          <div style="
+            position:absolute;inset:0;
+            border-radius:50%;
+            background:#3b82f6;
+            border:3px solid #fff;
+            box-shadow:0 2px 8px rgba(59,130,246,0.6);
+          "></div>
+        </div>`,
+      iconSize:   [20, 20],
+      iconAnchor: [10, 10],
+      popupAnchor:[0, -14],
+    });
+
+    // Remove old user marker if exists
+    if (userMarker) leafletMap.removeLayer(userMarker);
+
+    userMarker = L.marker([lat, lng], { icon: userIcon })
+      .addTo(leafletMap)
+      .bindPopup(`
+        <div style="font-family:'Jost',sans-serif;background:#161b22;color:#fff;padding:10px 14px;border-left:3px solid #3b82f6;">
+          <span style="color:#60a5fa;">● </span> Your current location
+        </div>`, { className: 'leaflet-popup-dynasty' });
+
+    // Update Google Maps deep-link with user origin
+    updateGmapsLink({ lat, lng });
+
+    // Fetch road route via OSRM
+    fetchOsrmRoute(lat, lng);
+  }
+
+  /**
+   * onLocationError — friendly error messages for GPS failures.
+   */
+  function onLocationError(error) {
+    resetGpsBtn();
+    const msgs = {
+      1: 'Location access was denied. Please allow location permission in your browser and try again.',
+      2: 'Your location could not be determined. Check your device GPS or connection.',
+      3: 'Location request timed out. Please try again.',
+    };
+    setStatus('error',
+      '<i class="fas fa-exclamation-triangle me-2"></i>' +
+      (msgs[error.code] || 'An unknown location error occurred.'));
+  }
+
+  /**
+   * fetchOsrmRoute — calls the free OSRM public routing API.
+   * OSRM returns a GeoJSON polyline of the road route.
+   * Falls back to a straight-line estimate if API is unreachable.
+   *
+   * @param {number} userLat
+   * @param {number} userLng
+   */
+  function fetchOsrmRoute(userLat, userLng) {
+    const profile = OSRM_PROFILES[selectedMode];
+
+    // OSRM API format: /route/v1/{profile}/{lng,lat};{lng,lat}
+    const osrmUrl =
+      `https://router.project-osrm.org/route/v1/${profile}/` +
+      `${userLng},${userLat};${HOTEL_LNG},${HOTEL_LAT}` +
+      `?overview=full&geometries=geojson&steps=false`;
+
+    fetch(osrmUrl)
+      .then(res => {
+        if (!res.ok) throw new Error('OSRM network error');
+        return res.json();
+      })
+      .then(data => {
+        if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
+          throw new Error('No route returned');
+        }
+
+        const route    = data.routes[0];
+        const coords   = route.geometry.coordinates; // [[lng,lat], ...]
+        const distM    = route.distance;             // metres
+        const durSec   = route.duration;             // seconds
+
+        // Convert to Leaflet [lat, lng] pairs
+        const latLngs  = coords.map(c => [c[1], c[0]]);
+
+        drawRoute(latLngs, distM, durSec);
+      })
+      .catch(() => {
+        // OSRM failed — draw straight line with haversine distance estimate
+        fallbackStraightLine(userLat, userLng);
+      });
+  }
+
+  /**
+   * drawRoute — renders the polyline on the map and shows stats.
+   *
+   * @param {Array}  latLngs  — array of [lat, lng] pairs
+   * @param {number} distM    — distance in metres
+   * @param {number} durSec   — duration in seconds
+   */
+  function drawRoute(latLngs, distM, durSec) {
+    // Remove old polyline
+    if (routePolyline) leafletMap.removeLayer(routePolyline);
+
+    // Draw gold route line
+    routePolyline = L.polyline(latLngs, {
+      color:     '#C9A84C',
+      weight:    5,
+      opacity:   0.85,
+      lineJoin:  'round',
+      lineCap:   'round',
+      dashArray: null,
+    }).addTo(leafletMap);
+
+    // Fit map to show both markers + the full route
+    leafletMap.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
+
+    // Format distance
+    const distText = distM >= 1000
+      ? (distM / 1000).toFixed(1) + ' km'
+      : Math.round(distM) + ' m';
+
+    // Format duration
+    const durMin  = Math.round(durSec / 60);
+    const durText = durMin >= 60
+      ? Math.floor(durMin / 60) + 'h ' + (durMin % 60) + 'm'
+      : durMin + ' min';
+
+    // Update stats panel
+    document.getElementById('statDistance').textContent = distText;
+    document.getElementById('statDuration').textContent = durText;
+    document.getElementById('routeStats').classList.add('visible');
+    document.getElementById('clearBtn').style.display = 'block';
+    document.getElementById('openGmapsLink').classList.add('visible');
+
+    const modeLabel = { car: 'driving', foot: 'walking', bike: 'cycling' }[selectedMode];
+    setStatus('success',
+      `<i class="fas fa-route me-2"></i>Route found! ` +
+      `<strong>${distText}</strong> away — about <strong>${durText}</strong> by ${modeLabel}.`);
+  }
+
+  /**
+   * fallbackStraightLine — used when OSRM is unavailable.
+   * Draws a dashed line and shows haversine ("as the crow flies") distance.
+   */
+  function fallbackStraightLine(userLat, userLng) {
+    if (routePolyline) leafletMap.removeLayer(routePolyline);
+
+    const latLngs = [[userLat, userLng], [HOTEL_LAT, HOTEL_LNG]];
+
+    routePolyline = L.polyline(latLngs, {
+      color:     '#C9A84C',
+      weight:    3,
+      opacity:   0.6,
+      dashArray: '8, 10',
+    }).addTo(leafletMap);
+
+    leafletMap.fitBounds(routePolyline.getBounds(), { padding: [50, 50] });
+
+    // Haversine formula for straight-line distance
+    const R    = 6371000; // Earth radius in metres
+    const φ1   = userLat   * Math.PI / 180;
+    const φ2   = HOTEL_LAT * Math.PI / 180;
+    const Δφ   = (HOTEL_LAT - userLat) * Math.PI / 180;
+    const Δλ   = (HOTEL_LNG - userLng) * Math.PI / 180;
+    const a    = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+    const distM = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distText = distM >= 1000 ? (distM/1000).toFixed(1) + ' km' : Math.round(distM) + ' m';
+
+    document.getElementById('statDistance').textContent = distText;
+    document.getElementById('statDuration').textContent = '—';
+    document.getElementById('routeStats').classList.add('visible');
+    document.getElementById('clearBtn').style.display = 'block';
+    document.getElementById('openGmapsLink').classList.add('visible');
+
+    setStatus('info',
+      `<i class="fas fa-info-circle me-2"></i>` +
+      `Showing straight-line distance: <strong>${distText}</strong>. ` +
+      `Use "Open in Google Maps" for full turn-by-turn navigation.`);
+  }
+
+  /**
+   * clearRoute — resets map and panel back to initial state.
+   */
+  function clearRoute() {
+    if (routePolyline) { leafletMap.removeLayer(routePolyline); routePolyline = null; }
+    if (userMarker)    { leafletMap.removeLayer(userMarker);    userMarker    = null; }
+
+    userLatLng = null;
+    leafletMap.setView([HOTEL_LAT, HOTEL_LNG], 15);
+
+    document.getElementById('routeStats').classList.remove('visible');
+    document.getElementById('clearBtn').style.display = 'none';
+    document.getElementById('openGmapsLink').classList.remove('visible');
+
+    const statusEl = document.getElementById('gpsStatus');
+    statusEl.className  = 'gps-status';
+    statusEl.innerHTML  = '';
+
+    updateGmapsLink(null);
+  }
+
+  /**
+   * setStatus — shows info / success / error message in the panel.
+   */
+  function setStatus(type, html) {
+    const el = document.getElementById('gpsStatus');
+    el.className  = `gps-status ${type}`;
+    el.innerHTML  = html;
+  }
+
+  /**
+   * resetGpsBtn — re-enables GPS button after a location attempt.
+   */
+  function resetGpsBtn() {
+    const btn = document.getElementById('gpsBtn');
+    btn.classList.remove('locating');
+    btn.disabled = false;
+  }
+
+  /**
+   * updateGmapsLink — builds the "Open in Google Maps" fallback URL.
+   * Pre-fills origin (user) and destination (hotel) for turn-by-turn.
+   */
+  function updateGmapsLink(userPos) {
+    const dest   = `${HOTEL_LAT},${HOTEL_LNG}`;
+    const gmMode = { car: 'driving', foot: 'walking', bike: 'bicycling' }[selectedMode];
+    let url;
+    if (userPos) {
+      url = `https://www.google.com/maps/dir/?api=1&origin=${userPos.lat},${userPos.lng}&destination=${dest}&travelmode=${gmMode}`;
+    } else {
+      url = `https://www.google.com/maps/search/?api=1&query=${dest}`;
+    }
+    document.getElementById('openGmapsLink').href = url;
+  }
+
+</script>
+
+<!-- Leaflet pulse animation for user dot + popup dark theme -->
+<style>
+  @keyframes leafletPulse {
+    0%   { transform: scale(1);   opacity: 0.7; }
+    100% { transform: scale(2.5); opacity: 0;   }
+  }
+  /* Style the Leaflet popup to match the dark theme */
+  .leaflet-popup-dynasty .leaflet-popup-content-wrapper,
+  .leaflet-popup-dynasty .leaflet-popup-tip {
+    background: #161b22 !important;
+    color: #fff !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
+    border: 1px solid rgba(201,168,76,0.3) !important;
+  }
+  .leaflet-popup-dynasty .leaflet-popup-content {
+    margin: 0 !important;
+  }
+  /* Remove default Leaflet branding blue from controls */
+  .leaflet-control-zoom a {
+    background: #161b22 !important;
+    color: #C9A84C !important;
+    border-color: rgba(201,168,76,0.3) !important;
+  }
+  .leaflet-control-zoom a:hover {
+    background: #C9A84C !important;
+    color: #0d1117 !important;
+  }
+  /* Attribution bar */
+  .leaflet-control-attribution {
+    background: rgba(13,17,23,0.8) !important;
+    color: #8b949e !important;
+    font-size: 0.65rem !important;
+  }
+  .leaflet-control-attribution a { color: #C9A84C !important; }
+</style>
+</body>
+</html>
