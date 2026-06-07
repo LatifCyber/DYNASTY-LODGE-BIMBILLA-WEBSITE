@@ -1190,119 +1190,7 @@
   </div>
 </section>
 
-<!-- =======================================================
-     GPS MAPPING & DIRECTIONS SECTION — NEW FEATURE
-     ======================================================= -->
-<section class="gps-section" id="directions">
-  <div class="container">
 
-    <!-- Section header (matches existing style) -->
-    <div class="text-center mb-5 fade-up">
-      <span class="section-tag">GPS Navigation</span>
-      <h2 class="section-title">Get <em>Directions</em> to Dynasty Lodge</h2>
-      <div class="divider-gold mx-auto"></div>
-      <p class="section-desc mx-auto">
-        Use your device's GPS to find your exact route to us — with real-time distance and travel time.
-      </p>
-    </div>
-
-    <!-- Free tier notice -->
-    <div class="api-key-notice fade-up">
-      <i class="fas fa-check-circle" style="color:var(--green-hotel);"></i>
-      <span>
-        <strong style="color:var(--gold-light);">100% Free &amp; No API Key Required.</strong>
-        This map runs on <strong>Leaflet.js + OpenStreetMap</strong> — completely free, open-source,
-        and works instantly with no sign-up or billing needed.
-        The <em>Open in Google Maps</em> button still provides full turn-by-turn navigation.
-      </span>
-    </div>
-
-    <div class="row g-4 align-items-start">
-
-      <!-- ── Left: Interactive Leaflet / OpenStreetMap ── -->
-      <div class="col-lg-8 fade-up">
-        <div id="dynasty-map">
-          <!-- Leaflet renders here on DOMContentLoaded — no API key needed -->
-        </div>
-      </div>
-
-      <!-- ── Right: GPS Control Panel ── -->
-      <div class="col-lg-4 fade-up" style="transition-delay:0.15s">
-        <div class="gps-panel">
-
-          <!-- Panel title -->
-          <div>
-            <div class="gps-panel-title">Navigate to<br><em>Dynasty Lodge</em></div>
-            <p style="font-size:0.82rem;color:var(--text-muted-custom);margin-top:10px;line-height:1.6;">
-              Click the button below to detect your current location and draw a live route to the hotel.
-            </p>
-          </div>
-
-          <!-- Hotel pin address -->
-          <div class="hotel-pin-info">
-            <i class="fas fa-map-pin"></i>
-            <div>
-              <div class="hotel-pin-label">Hotel Location</div>
-              <div class="hotel-pin-val">Dynasty Lodge<br>Bimbilla, Northern Region<br>Ghana</div>
-            </div>
-          </div>
-
-          <!-- Travel mode selector -->
-          <div>
-            <div style="font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Travel Mode</div>
-            <div class="travel-modes" id="travelModes">
-              <button class="travel-mode-btn active" data-mode="car" onclick="setTravelMode(this)">
-                <i class="fas fa-car"></i> Drive
-              </button>
-              <button class="travel-mode-btn" data-mode="foot" onclick="setTravelMode(this)">
-                <i class="fas fa-walking"></i> Walk
-              </button>
-              <button class="travel-mode-btn" data-mode="bike" onclick="setTravelMode(this)">
-                <i class="fas fa-bicycle"></i> Cycle
-              </button>
-            </div>
-          </div>
-
-          <!-- Main GPS button -->
-          <button class="btn-gps" id="gpsBtn" onclick="getMyLocation()">
-            <span class="gps-spinner"></span>
-            <i class="fas fa-location-crosshairs gps-icon"></i>
-            Get My Location & Route
-          </button>
-
-          <!-- Status / error messages -->
-          <div class="gps-status" id="gpsStatus"></div>
-
-          <!-- Route stats: distance & ETA (shown after successful route) -->
-          <div class="route-stats" id="routeStats">
-            <div class="route-stat-box">
-              <div class="route-stat-icon"><i class="fas fa-road"></i></div>
-              <div class="route-stat-value" id="statDistance">—</div>
-              <div class="route-stat-label">Distance</div>
-            </div>
-            <div class="route-stat-box">
-              <div class="route-stat-icon"><i class="fas fa-clock"></i></div>
-              <div class="route-stat-value" id="statDuration">—</div>
-              <div class="route-stat-label">Est. Travel Time</div>
-            </div>
-          </div>
-
-          <!-- Open in Google Maps (native app) -->
-          <a id="openGmapsLink" class="open-gmaps-link" href="#" target="_blank" rel="noopener">
-            <i class="fab fa-google"></i> Can't follow route? Open in Google Maps
-          </a>
-
-          <!-- Clear route -->
-          <button class="clear-route-link" id="clearBtn" onclick="clearRoute()">
-            <i class="fas fa-times me-1"></i> Clear Route
-          </button>
-
-        </div><!-- /.gps-panel -->
-      </div>
-
-    </div><!-- /.row -->
-  </div><!-- /.container -->
-</section>
 <!-- ======= END GPS MAPPING SECTION ======= -->
 
 
@@ -1344,9 +1232,8 @@
             </div>
           </div>
         </div>
-        <!-- Scrolls to the in-page GPS navigation section — no external site -->
-        <a href="#directions" class="directions-btn" onclick="scrollToGps(event)">
-          <i class="fas fa-location-crosshairs"></i> Get Directions (GPS)
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Dynasty+Lodge+Bimbilla+Ghana" target="_blank" class="directions-btn">
+          <i class="fas fa-directions"></i> Get Directions on Google Maps
         </a>
       </div>
       <div class="col-lg-6 fade-up" style="transition-delay:0.2s">
@@ -1397,10 +1284,10 @@
           <li><a href="mailto:info@dynastylodge.com.gh">info@dynastylodge.com.gh</a></li>
         </ul>
         <div style="margin-top:20px;">
-          <a href="#directions"
-             onclick="scrollToGps(event)"
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Dynasty+Lodge+Bimbilla+Ghana"
+             target="_blank"
              style="color:var(--gold);font-size:0.82rem;text-decoration:none;">
-            <i class="fas fa-location-crosshairs me-1"></i> Get Directions (GPS)
+            <i class="fas fa-map-marker-alt me-1"></i> Get Directions
           </a>
         </div>
       </div>
@@ -1919,29 +1806,7 @@
   }
 
   /**
-   * scrollToGps — scrolls smoothly to the in-page GPS section.
-   * Called by "Get Directions" buttons in the contact section and footer.
-   * After scrolling, highlights the GPS button with a pulse to guide the user.
-   */
-  function scrollToGps(e) {
-    if (e) e.preventDefault();
-    const section = document.getElementById('directions');
-    if (!section) return;
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    // Briefly pulse the GPS button to draw attention after scroll lands
-    setTimeout(() => {
-      const btn = document.getElementById('gpsBtn');
-      if (!btn) return;
-      btn.style.transition = 'box-shadow 0.3s, transform 0.3s';
-      btn.style.boxShadow  = '0 0 0 6px rgba(201,168,76,0.35), 0 0 0 12px rgba(201,168,76,0.15)';
-      btn.style.transform  = 'scale(1.03)';
-      setTimeout(() => {
-        btn.style.boxShadow = '';
-        btn.style.transform = '';
-      }, 1400);
-    }, 800); // delay until scroll animation completes
-  }
+   * updateGmapsLink — builds the "Open in Google Maps" fallback URL.
    * Pre-fills origin (user) and destination (hotel) for turn-by-turn.
    */
   function updateGmapsLink(userPos) {
