@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,7 +10,6 @@
   <!-- Leaflet CSS — required for map tiles and controls to render correctly -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <style>
-    /* ── Dark mode (default) ── */
     :root {
       --gold: #C9A84C;
       --gold-light: #e8c97a;
@@ -19,117 +18,7 @@
       --green-hotel: #7ab648;
       --text-muted-custom: #8b949e;
       --white: #ffffff;
-      --body-bg: #0d1117;
-      --body-color: #dde1e7;
-      --card-bg: #161b22;
-      --card-border: rgba(255,255,255,0.06);
     }
-
-    /* ── Light mode overrides ── */
-    body.light-mode {
-      --dark: #f5f5f0;
-      --dark2: #ffffff;
-      --body-bg: #f5f5f0;
-      --body-color: #1a1a1a;
-      --card-bg: #ffffff;
-      --card-border: rgba(0,0,0,0.08);
-      --text-muted-custom: #555555;
-      --white: #1a1a1a;
-    }
-    body.light-mode { background: var(--body-bg); color: var(--body-color); }
-    body.light-mode .navbar-dynasty.scrolled { background: rgba(245,245,240,0.97); box-shadow: 0 2px 30px rgba(0,0,0,0.1); }
-    body.light-mode .navbar-logo span { color: #1a1a1a; }
-    body.light-mode .nav-links a { color: rgba(0,0,0,0.75); }
-    body.light-mode .nav-links a:hover { color: var(--green-hotel); }
-    body.light-mode .nav-book-btn { background: var(--green-hotel) !important; color: #fff !important; }
-    body.light-mode .nav-book-btn:hover { background: #5a9a2e !important; }
-    body.light-mode .hamburger span { background: #1a1a1a; }
-    body.light-mode .mobile-menu { background: #f5f5f0; }
-    body.light-mode .mobile-menu a { color: #1a1a1a; }
-    body.light-mode .mobile-close { color: #1a1a1a; }
-    body.light-mode .hero-overlay { background: linear-gradient(to bottom,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0.2) 50%,rgba(0,0,0,0.6) 100%); }
-    body.light-mode .availability-bar { background: #fff; border-color: rgba(0,120,60,0.2); }
-    body.light-mode .avail-field input,
-    body.light-mode .avail-field select { color: #1a1a1a; }
-    body.light-mode .avail-submit { background: var(--green-hotel); }
-    body.light-mode .avail-submit:hover { background: #5a9a2e; }
-    body.light-mode .about-section,
-    body.light-mode .gallery-section,
-    body.light-mode .testimonials-section { background: #f5f5f0; }
-    body.light-mode .section-title { color: #1a1a1a; }
-    body.light-mode .room-card,
-    body.light-mode .amenity-card,
-    body.light-mode .testimonial-card,
-    body.light-mode .booking-form-card,
-    body.light-mode .gps-panel { background: #fff; border-color: rgba(0,0,0,0.08); }
-    body.light-mode .rooms-section { background: linear-gradient(180deg,#f5f5f0 0%,#ffffff 100%); }
-    body.light-mode .amenities-section { background: #eaeae4; }
-    body.light-mode .room-name,
-    body.light-mode .amenity-name,
-    body.light-mode .testimonial-name,
-    body.light-mode .gps-panel-title { color: #1a1a1a; }
-    body.light-mode .room-desc,
-    body.light-mode .amenity-desc,
-    body.light-mode .testimonial-text,
-    body.light-mode .section-desc,
-    body.light-mode .testimonial-location { color: #555; }
-    body.light-mode .btn-gold { background: var(--green-hotel); color: #fff; }
-    body.light-mode .btn-gold:hover { background: #5a9a2e; color: #fff; }
-    body.light-mode .booking-section { background: linear-gradient(135deg,#f5f5f0 0%,#e8f4ec 100%); }
-    body.light-mode .booking-section::before { opacity: 0.04; }
-    body.light-mode .form-control-custom { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); color: #1a1a1a; }
-    body.light-mode .form-control-custom::placeholder { color: rgba(0,0,0,0.3); }
-    body.light-mode .form-control-custom option { background: #fff; color: #1a1a1a; }
-    body.light-mode .location-section { background: #eaeae4; }
-    body.light-mode .location-text-val { color: #333; }
-    body.light-mode .directions-btn { background: var(--green-hotel); color: #fff; }
-    body.light-mode .directions-btn:hover { background: #5a9a2e; }
-    body.light-mode footer { background: #e0e0da; border-top-color: rgba(0,0,0,0.08); }
-    body.light-mode .footer-logo { color: var(--green-hotel); }
-    body.light-mode .footer-copy,
-    body.light-mode .footer-desc,
-    body.light-mode .footer-links a { color: #555; }
-    body.light-mode .footer-links a:hover { color: var(--green-hotel); }
-    body.light-mode .footer-heading { color: var(--green-hotel); }
-    body.light-mode .footer-social a { border-color: rgba(0,0,0,0.15); color: #555; }
-    body.light-mode .footer-social a:hover { border-color: var(--green-hotel); color: var(--green-hotel); }
-    body.light-mode .gps-section { background: #f5f5f0; }
-    body.light-mode .hotel-pin-info { background: rgba(122,182,72,0.08); border-left-color: var(--green-hotel); }
-    body.light-mode .hotel-pin-label { color: var(--green-hotel); }
-    body.light-mode .btn-gps { background: var(--green-hotel); color: #fff; }
-    body.light-mode .btn-gps:hover:not(:disabled) { background: #5a9a2e; }
-    body.light-mode .route-stat-box { background: rgba(122,182,72,0.08); border-color: rgba(122,182,72,0.3); }
-    body.light-mode .route-stat-value { color: #1a1a1a; }
-    body.light-mode .travel-mode-btn { color: #555; border-color: rgba(0,0,0,0.12); }
-    body.light-mode .travel-mode-btn.active { border-color: var(--green-hotel); color: var(--green-hotel); background: rgba(122,182,72,0.08); }
-    body.light-mode .map-container { border-color: rgba(0,0,0,0.1); }
-    body.light-mode #dynasty-map { border-color: rgba(0,0,0,0.1); background: #e8e8e2; }
-    body.light-mode .api-key-notice { background: rgba(122,182,72,0.08); border-color: rgba(122,182,72,0.4); }
-
-    /* ── Theme toggle button ── */
-    .theme-toggle {
-      background: none;
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 20px;
-      padding: 6px 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-family: 'Jost', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.8);
-      transition: all 0.3s;
-      flex-shrink: 0;
-    }
-    .theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
-    .theme-toggle .toggle-icon { font-size: 0.9rem; transition: transform 0.4s; }
-    body.light-mode .theme-toggle { border-color: rgba(0,0,0,0.2); color: #333; }
-    body.light-mode .theme-toggle:hover { border-color: var(--green-hotel); color: var(--green-hotel); }
-    /* Rotate sun icon in light mode */
-    body.light-mode .theme-toggle .toggle-icon { transform: rotate(180deg); }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -850,15 +739,10 @@
     <li><a href="#about">About</a></li>
     <li><a href="#rooms">Rooms</a></li>
     <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#directions">Directions</a></li>
+    <li><a href="#contact">Directions</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#booking" class="nav-book-btn">Book Now</a></li>
   </ul>
-  <!-- Light / Dark mode toggle -->
-  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
-    <i class="fas fa-circle-half-stroke toggle-icon"></i>
-    <span id="themeLabel">Light</span>
-  </button>
   <div class="hamburger" id="hamburger">
     <span></span><span></span><span></span>
   </div>
@@ -871,8 +755,7 @@
   <a href="#about" onclick="closeMobile()">About</a>
   <a href="#rooms" onclick="closeMobile()">Rooms</a>
   <a href="#gallery" onclick="closeMobile()">Gallery</a>
-  <!-- Directions: closes menu then scrolls to the in-page GPS map section -->
-  <a href="#directions" onclick="closeMobile(); setTimeout(scrollToGps, 350);">Directions</a>
+  <a href="#directions" onclick="closeMobile()">Directions</a>
   <a href="#booking" onclick="closeMobile()">Book Now</a>
   <a href="#contact" onclick="closeMobile()">Contact</a>
 </div>
@@ -1178,14 +1061,14 @@
           <div class="location-icon"><i class="fas fa-phone"></i></div>
           <div>
             <div class="location-text-title">Call Us</div>
-            <div class="location-text-val">+233 54 430 6873</div>
+            <div class="location-text-val">+233 XX XXX XXXX</div>
           </div>
         </div>
         <div class="location-item">
           <div class="location-icon"><i class="fab fa-whatsapp"></i></div>
           <div>
             <div class="location-text-title">WhatsApp</div>
-            <div class="location-text-val">+233 54 430 6873</div>
+            <div class="location-text-val">+233 XX XXX XXXX</div>
           </div>
         </div>
       </div>
@@ -1202,7 +1085,7 @@
             <div class="col-md-6">
               <div class="form-group-custom">
                 <label class="form-label-custom">Phone Number *</label>
-                <input type="tel" class="form-control-custom" id="b_phone" placeholder="+233 54 430 6873">
+                <input type="tel" class="form-control-custom" id="b_phone" placeholder="+233 XX XXX XXXX">
               </div>
             </div>
             <div class="col-12">
@@ -1307,119 +1190,7 @@
   </div>
 </section>
 
-<!-- =======================================================
-     GPS MAPPING & DIRECTIONS SECTION — NEW FEATURE
-     ======================================================= -->
-<section class="gps-section" id="directions">
-  <div class="container">
 
-    <!-- Section header (matches existing style) -->
-    <div class="text-center mb-5 fade-up">
-      <span class="section-tag">GPS Navigation</span>
-      <h2 class="section-title">Get <em>Directions</em> to Dynasty Lodge</h2>
-      <div class="divider-gold mx-auto"></div>
-      <p class="section-desc mx-auto">
-        Use your device's GPS to find your exact route to us — with real-time distance and travel time.
-      </p>
-    </div>
-
-    <!-- Free tier notice -->
-    <div class="api-key-notice fade-up">
-      <i class="fas fa-check-circle" style="color:var(--green-hotel);"></i>
-      <span>
-        <strong style="color:var(--gold-light);">100% Free &amp; No API Key Required.</strong>
-        This map runs on <strong>Leaflet.js + OpenStreetMap</strong> — completely free, open-source,
-        and works instantly with no sign-up or billing needed.
-        The <em>Open in Google Maps</em> button still provides full turn-by-turn navigation.
-      </span>
-    </div>
-
-    <div class="row g-4 align-items-start">
-
-      <!-- ── Left: Interactive Leaflet / OpenStreetMap ── -->
-      <div class="col-lg-8 fade-up">
-        <div id="dynasty-map">
-          <!-- Leaflet renders here on DOMContentLoaded — no API key needed -->
-        </div>
-      </div>
-
-      <!-- ── Right: GPS Control Panel ── -->
-      <div class="col-lg-4 fade-up" style="transition-delay:0.15s">
-        <div class="gps-panel">
-
-          <!-- Panel title -->
-          <div>
-            <div class="gps-panel-title">Navigate to<br><em>Dynasty Lodge</em></div>
-            <p style="font-size:0.82rem;color:var(--text-muted-custom);margin-top:10px;line-height:1.6;">
-              Click the button below to detect your current location and draw a live route to the hotel.
-            </p>
-          </div>
-
-          <!-- Hotel pin address -->
-          <div class="hotel-pin-info">
-            <i class="fas fa-map-pin"></i>
-            <div>
-              <div class="hotel-pin-label">Hotel Location</div>
-              <div class="hotel-pin-val">Dynasty Lodge<br>Bimbilla, Northern Region<br>Ghana</div>
-            </div>
-          </div>
-
-          <!-- Travel mode selector -->
-          <div>
-            <div style="font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Travel Mode</div>
-            <div class="travel-modes" id="travelModes">
-              <button class="travel-mode-btn active" data-mode="car" onclick="setTravelMode(this)">
-                <i class="fas fa-car"></i> Drive
-              </button>
-              <button class="travel-mode-btn" data-mode="foot" onclick="setTravelMode(this)">
-                <i class="fas fa-walking"></i> Walk
-              </button>
-              <button class="travel-mode-btn" data-mode="bike" onclick="setTravelMode(this)">
-                <i class="fas fa-bicycle"></i> Cycle
-              </button>
-            </div>
-          </div>
-
-          <!-- Main GPS button -->
-          <button class="btn-gps" id="gpsBtn" onclick="getMyLocation()">
-            <span class="gps-spinner"></span>
-            <i class="fas fa-location-crosshairs gps-icon"></i>
-            Get My Location & Route
-          </button>
-
-          <!-- Status / error messages -->
-          <div class="gps-status" id="gpsStatus"></div>
-
-          <!-- Route stats: distance & ETA (shown after successful route) -->
-          <div class="route-stats" id="routeStats">
-            <div class="route-stat-box">
-              <div class="route-stat-icon"><i class="fas fa-road"></i></div>
-              <div class="route-stat-value" id="statDistance">—</div>
-              <div class="route-stat-label">Distance</div>
-            </div>
-            <div class="route-stat-box">
-              <div class="route-stat-icon"><i class="fas fa-clock"></i></div>
-              <div class="route-stat-value" id="statDuration">—</div>
-              <div class="route-stat-label">Est. Travel Time</div>
-            </div>
-          </div>
-
-          <!-- Open in Google Maps (native app) -->
-          <a id="openGmapsLink" class="open-gmaps-link" href="#" target="_blank" rel="noopener">
-            <i class="fab fa-google"></i> Can't follow route? Open in Google Maps
-          </a>
-
-          <!-- Clear route -->
-          <button class="clear-route-link" id="clearBtn" onclick="clearRoute()">
-            <i class="fas fa-times me-1"></i> Clear Route
-          </button>
-
-        </div><!-- /.gps-panel -->
-      </div>
-
-    </div><!-- /.row -->
-  </div><!-- /.container -->
-</section>
 <!-- ======= END GPS MAPPING SECTION ======= -->
 
 
@@ -1443,7 +1214,7 @@
             <div class="location-icon"><i class="fas fa-phone"></i></div>
             <div>
               <div class="location-text-title">Phone</div>
-              <div class="location-text-val">+233 54 430 6873</div>
+              <div class="location-text-val">+233 XX XXX XXXX</div>
             </div>
           </div>
           <div class="location-item">
@@ -1461,9 +1232,8 @@
             </div>
           </div>
         </div>
-        <!-- Scrolls to the in-page GPS navigation section — no external site -->
-        <a href="#directions" class="directions-btn" onclick="scrollToGps(event)">
-          <i class="fas fa-location-crosshairs"></i> Get Directions (GPS)
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Dynasty+Lodge+Bimbilla+Ghana" target="_blank" class="directions-btn">
+          <i class="fas fa-directions"></i> Get Directions on Google Maps
         </a>
       </div>
       <div class="col-lg-6 fade-up" style="transition-delay:0.2s">
@@ -1510,24 +1280,24 @@
         <div class="footer-heading">Contact</div>
         <ul class="footer-links">
           <li><a href="#">Bimbilla, Northern Region, Ghana</a></li>
-          <li><a href="tel:+233544306873">+233 54 430 6873</a></li>
+          <li><a href="tel:+233530285257">+233530285257</a></li>
           <li><a href="mailto:info@dynastylodge.com.gh">info@dynastylodge.com.gh</a></li>
         </ul>
         <div style="margin-top:20px;">
-          <a href="#directions"
-             onclick="scrollToGps(event)"
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Dynasty+Lodge+Bimbilla+Ghana"
+             target="_blank"
              style="color:var(--gold);font-size:0.82rem;text-decoration:none;">
-            <i class="fas fa-location-crosshairs me-1"></i> Get Directions (GPS)
+            <i class="fas fa-map-marker-alt me-1"></i> Get Directions
           </a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <div class="footer-copy">© 2024 Dynasty Lodge, Bimbilla – Ghana. All rights reserved.</div>
+      <div class="footer-copy">© 2026 Dynasty Lodge, Bimbilla – Ghana. All rights reserved.</div>
       <div class="footer-social">
         <a href="#"><i class="fab fa-facebook-f"></i></a>
         <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="https://wa.me/233544306873?text=Hello%20Dynasty%20Lodge%2C%20I%20would%20like%20to%20enquire." target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="#"><i class="fab fa-whatsapp"></i></a>
         <a href="#"><i class="fab fa-twitter"></i></a>
       </div>
     </div>
@@ -1535,7 +1305,7 @@
 </footer>
 
 <!-- WhatsApp Float Button -->
-<a href="https://wa.me/233544306873?text=Hello%20Dynasty%20Lodge%2C%20I%20would%20like%20to%20make%20a%20reservation."
+<a href="https://wa.me/233530285257?text=Hello%20Dynasty%20Lodge%2C%20I%20would%20like%20to%20make%20a%20reservation."
    class="whatsapp-float" target="_blank" title="Book via WhatsApp">
   <i class="fab fa-whatsapp"></i>
 </a>
@@ -1632,7 +1402,7 @@
       `🏨 *Dynasty Lodge Booking*\n\nRef: *${ref}*\nName: ${name}\nPhone: ${phone}\nRoom: ${room}\n` +
       `Check-in: ${checkin}\nCheck-out: ${checkout}\n\nPlease confirm my reservation.`
     );
-    document.getElementById('whatsappConfirm').href = `https://wa.me/233544306873?text=${msg}`;
+    document.getElementById('whatsappConfirm').href = `https://wa.me/233XXXXXXXXX?text=${msg}`;
   }
 
   // Set min dates
@@ -1671,13 +1441,8 @@
 
   // ── Custom map tile layer (dark-compatible Stadia Alidade) ───
   // Using CartoDB Dark Matter tiles — free, no key, dark themed
+  const TILE_URL     = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
   const TILE_ATTRIB  = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
-  // Tile URL selected based on current theme (dark default, light when toggled)
-  function getTileUrl() {
-    return document.body.classList.contains('light-mode')
-      ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-  }
 
   /**
    * initLeafletMap — initialises the Leaflet map on DOMContentLoaded.
@@ -1693,7 +1458,7 @@
     });
 
     // Add dark CartoDB tile layer (free, matches site dark theme)
-    L.tileLayer(getTileUrl(), {
+    L.tileLayer(TILE_URL, {
       attribution: TILE_ATTRIB,
       subdomains:  'abcd',
       maxZoom:     19,
@@ -2040,63 +1805,8 @@
     btn.disabled = false;
   }
 
-  /* ============================================================
-     THEME TOGGLE — Light / Dark Mode
-     ============================================================ */
-
   /**
-   * toggleTheme — switches between dark (default) and light mode.
-   * Persists preference to localStorage so it survives page refresh.
-   */
-  function toggleTheme() {
-    const body      = document.body;
-    const label     = document.getElementById('themeLabel');
-    const isLight   = body.classList.toggle('light-mode');
-    label.textContent = isLight ? 'Dark' : 'Light';
-    localStorage.setItem('dynastyTheme', isLight ? 'light' : 'dark');
-
-    // Re-apply map tiles to match the new theme
-    if (leafletMap) {
-      leafletMap.eachLayer(layer => {
-        if (layer._url) leafletMap.removeLayer(layer); // remove old tile layer
-      });
-      const tileUrl = isLight
-        ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-      const attrib = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
-      L.tileLayer(tileUrl, { attribution: attrib, subdomains: 'abcd', maxZoom: 19 }).addTo(leafletMap);
-    }
-  }
-
-  // Restore saved theme on page load
-  (function applyStoredTheme() {
-    if (localStorage.getItem('dynastyTheme') === 'light') {
-      document.body.classList.add('light-mode');
-      const label = document.getElementById('themeLabel');
-      if (label) label.textContent = 'Dark';
-    }
-  })();
-
-  /**
-   * scrollToGps — scrolls smoothly to the in-page GPS section.
-   * Works both as an onclick handler (with event) and called directly (no args).
-   */
-  function scrollToGps(e) {
-    if (e && e.preventDefault) e.preventDefault();
-    const section = document.getElementById('directions');
-    if (!section) return;
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    // Pulse-highlight the GPS button after scroll completes
-    setTimeout(() => {
-      const btn = document.getElementById('gpsBtn');
-      if (!btn) return;
-      btn.style.transition  = 'box-shadow 0.3s, transform 0.3s';
-      btn.style.boxShadow   = '0 0 0 6px rgba(201,168,76,0.35), 0 0 0 12px rgba(201,168,76,0.15)';
-      btn.style.transform   = 'scale(1.03)';
-      setTimeout(() => { btn.style.boxShadow = ''; btn.style.transform = ''; }, 1400);
-    }, 800);
-  }
+   * updateGmapsLink — builds the "Open in Google Maps" fallback URL.
    * Pre-fills origin (user) and destination (hotel) for turn-by-turn.
    */
   function updateGmapsLink(userPos) {
